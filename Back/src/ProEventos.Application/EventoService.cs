@@ -60,7 +60,7 @@ namespace ProEventos.Application
             }
         }
 
-        public async Task<bool> DeleteEventos(int eventoId)
+        public async Task<bool> DeleteEvento(int eventoId)
         {
             try
             {

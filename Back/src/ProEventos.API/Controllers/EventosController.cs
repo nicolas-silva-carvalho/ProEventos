@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using ProEventos.Application.Contratos;
+using ProEventos.Domain;
 
 namespace ProEventos.API.Controllers
 {
@@ -59,6 +60,53 @@ namespace ProEventos.API.Controllers
             catch (Exception ex)
             {
                 return this.StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao tentar recuperar o evento. Erro {ex.Message}");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Post(Evento model)
+        {
+            try
+            {
+                var eventos = await _eventoService.AddEventos(model);
+                if (eventos == null) return BadRequest("Erro ao tentar adicionar evento.");
+
+                return Ok(eventos);
+            }
+            catch (Exception ex)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao adicionar um evento. Erro {ex.Message}");
+            }
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put(int id, Evento model)
+        {
+            try
+            {
+                var eventos = await _eventoService.UpdateEventos(id, model);
+                if (eventos == null) return BadRequest("Erro ao tentar atualizar evento.");
+
+                return Ok(eventos);
+            }
+            catch (Exception ex)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao atualizar um evento. Erro {ex.Message}");
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            try
+            {
+                if (await _eventoService.DeleteEvento(id))
+                    return Ok("Deletado.");
+                else return BadRequest("Erro ao deletar evento.");
+            }
+            catch (Exception ex)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao deletar um evento. Erro {ex.Message}");
             }
         }
     }

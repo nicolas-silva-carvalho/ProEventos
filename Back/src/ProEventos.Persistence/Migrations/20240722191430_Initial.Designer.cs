@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using ProEventos.Persistence;
 using ProEventos.Persistence.Contextos;
 
 #nullable disable
@@ -12,7 +11,7 @@ using ProEventos.Persistence.Contextos;
 namespace ProEventos.Persistence.Migrations
 {
     [DbContext(typeof(ProEventosContext))]
-    [Migration("20240718175148_Initial")]
+    [Migration("20240722191430_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
