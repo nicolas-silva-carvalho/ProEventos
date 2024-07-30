@@ -1,17 +1,26 @@
+import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-titulo',
   templateUrl: './titulo.component.html',
   standalone: true,
-  styleUrls: ['./titulo.component.css']
+  styleUrls: ['./titulo.component.css'],
+  imports: [CommonModule]
 })
 export class TituloComponent implements OnInit {
   @Input() titulo!: string;
+  @Input() iconClass = 'fa fa-user';
+  @Input() subtitulo = 'Desde 2024';
+  @Input() botaoListar = false;
 
-  constructor() { }
+  constructor(private router: Router) { }
 
   ngOnInit() {
   }
 
+  public listar(): void {
+    this.router.navigate([`/${this.titulo.toLowerCase()}/lista`]);
+  }
 }
