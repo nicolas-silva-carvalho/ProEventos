@@ -1,7 +1,7 @@
 <app-titulo [titulo]="'Perfil'" [botaoListar]="false"></app-titulo>
 
 <div class="card rounded shadow-sm">
-  <form>
+  <form [formGroup]="form">
     <div class="row p-3">
       <div class="col-lg-3 pt-1">
         <div class="card mb-3">
@@ -39,13 +39,14 @@
         </div>
       </div>
       <div class="col-lg-9">
-        <div class="form-row">
+        <div class="form-row row">
           <div class="form-group col-12">
             <h3 class="border-bottom">Detalhe Perfil</h3>
           </div>
           <div class="form-group col">
             <label>Título</label>
-            <select class="form-control">
+            <select class="form-control form-select" aria-label="Opções"
+              [ngClass]="{'is-invalid' : f.titulo?.errors && f.titulo.touched}" formControlName="titulo">
               <option value=""></option>
               <option value="0">Não Quero</option>
               <option value="Senhorita">Tecnólogo(a)</option>
@@ -56,58 +57,93 @@
               <option value="Senhorita">Doutor(a)</option>
               <option value="Senhorita">Pós Doc</option>
             </select>
+            <div *ngIf="f.titulo.errors?.required && f.titulo.touched" class="invalid-feedback">
+              Título é obrigatório.
+            </div>
           </div>
-          <div class="form-group col-sm-5">
+          <div class="form-group col-sm-5 col">
             <label>Primeiro Nome</label>
-            <input type="text" class="form-control" />
-
+            <input type="text" class="form-control"
+              [ngClass]="{'is-invalid' : f.primeiroNome?.errors && f.primeiroNome.touched}"
+              formControlName="primeiroNome" placeholder="Insira o Primeiro nome" />
+            <div *ngIf="f.primeiroNome.errors?.required && f.primeiroNome.touched" class="invalid-feedback">
+              Primeiro nome é obrigatório.
+            </div>
           </div>
-          <div class="form-group col-sm-5">
+          <div class="form-group col-sm-5 col">
             <label>Último nome</label>
-            <input type="text" class="form-control" />
+            <input type="text" class="form-control"
+              [ngClass]="{'is-invalid' : f.ultimoNome?.errors && f.ultimoNome.touched}" formControlName="ultimoNome"
+              placeholder="Insira o Último nome" />
+            <div *ngIf="f.ultimoNome.errors?.required && f.ultimoNome.touched" class="invalid-feedback">
+              Último nome é obrigatório.
+            </div>
 
           </div>
         </div>
-        <div class="form-row">
-          <div class="form-group col-sm-5">
+        <div class="form-row row">
+          <div class="form-group col-sm-5 col">
             <label>E-mail</label>
-            <input type="text" class="form-control" />
+            <input class="form-control" type="text" [ngClass]="{'is-invalid' : f.email?.errors && f.email.touched}"
+              formControlName="email" placeholder="Insira o Nome Completo" />
+            <div *ngIf="f.email.errors?.required && f.email.touched" class="invalid-feedback">
+              E-mail é obrigatório.
+            </div>
           </div>
-          <div class="form-group col-sm-4">
+          <div class="form-group col-sm-4 col">
             <label>Telefone</label>
-            <input type="text" class="form-control" />
+            <input class="form-control" type="text"
+              [ngClass]="{'is-invalid' : f.telefone?.errors && f.telefone.touched}" formControlName="telefone"
+              placeholder="Insira o Nome Completo" />
+            <div *ngIf="f.telefone.errors?.required && f.telefone.touched" class="invalid-feedback">
+              Telefone é obrigatório.
+            </div>
           </div>
           <div class="form-group col-sm">
             <label>Função</label>
-            <select class="form-control">
+            <select class="form-control" [ngClass]="{'is-invalid' : f.funcao?.errors && f.funcao.touched}"
+              formControlName="funcao">
               <option value=""></option>
               <option value="Participante">Participante</option>
               <option value="Palestrante">Palestrante</option>
             </select>
+            <div *ngIf="f.funcao.errors?.required && f.funcao.touched" class="invalid-feedback">
+              Função é obrigatório.
+            </div>
           </div>
           <form-group class="col-12">
             <label>Descrição</label>
-            <input type="text" class="form-control" />
+            <input class="form-control" type="text"
+              [ngClass]="{'is-invalid' : f.descricao?.errors && f.descricao.touched}" formControlName="descricao"
+              placeholder="Insira o Nome Completo" />
+            <div *ngIf="f.descricao.errors?.required && f.descricao.touched" class="invalid-feedback">
+              Descrição é obrigatório.
+            </div>
           </form-group>
         </div>
         <div>
           <h3 class="pt-3 border-bottom">Mudar Senha</h3>
           <p>Caso mude de senha, preencha os campos abaixo:</p>
         </div>
-        <div class="form-row">
-          <div class="form-group col-sm">
+        <div class="form-row row">
+          <div class="form-group col-sm col">
             <label>Senha</label>
-            <input type="password" class="form-control" />
+            <input type="password" class="form-control" formControlName="senha"/>
           </div>
-          <div class="form-group col-sm">
+          <div class="form-group col-sm col">
             <label>Confirmar Senha</label>
-            <input type="password" class="form-control" />
+            <input class="form-control" type="password"
+              [ngClass]="{'is-invalid' : f.confirmarSenha?.errors && f.confirmarSenha.touched}"
+              formControlName="confirmarSenha" placeholder="Confirme a Senha" />
+            <div *ngIf="f.confirmarSenha.errors?.mustMatch && f.confirmarSenha.touched" class="invalid-feedback">
+              Repetir a senha é obrigatório.
+            </div>
           </div>
         </div>
       </div>
     </div>
     <div class="card-footer">
-      <div class="d-flex">
+      <div class="d-flex justify-content-end">
         <button class="btn btn-outline-secondary mr-auto border">
           Cancelar Alteração
         </button>
