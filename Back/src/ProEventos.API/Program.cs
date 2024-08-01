@@ -12,6 +12,8 @@ builder.Services.AddDbContext<ProEventosContext>(options => options.UseSqlite(bu
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers().AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
 builder.Services.AddScoped<IEventoService, EventoService>();
 builder.Services.AddScoped<IGeralPersistence, GeralPersistence>();
 builder.Services.AddScoped<IEventoPersistence, EventoPersistence>();
