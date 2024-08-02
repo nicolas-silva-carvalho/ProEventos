@@ -1,28 +1,54 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { BsDatepickerModule, BsLocaleService } from 'ngx-bootstrap/datepicker';
+import { defineLocale } from 'ngx-bootstrap/chronos';
+import { ptBrLocale } from 'ngx-bootstrap/locale';
+import { ActivatedRoute } from '@angular/router';
+import { EventoService } from '../../../services/evento.service';
+import { Evento } from '../../../models/Evento';
+import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
+import { ToastrModule, ToastrService } from 'ngx-toastr';
+defineLocale('pt-br', ptBrLocale);
 
 @Component({
   selector: 'app-evento-detalhe',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, BsDatepickerModule, ToastrModule, NgxSpinnerModule,],
   templateUrl: './evento-detalhe.component.html',
-  styleUrl: './evento-detalhe.component.css'
+  styleUrls: ['./evento-detalhe.component.css'] // Corrigido de styleUrl para styleUrls
 })
 export class EventoDetalheComponent implements OnInit {
 
+  evento!: Evento;
   form!: FormGroup;
 
   get f(): any {
-    return this.form.controls
+    return this.form.controls;
   }
 
-  constructor(private formBuilder: FormBuilder) {
+  get bsConfig(): any {
+    return {
+      isAnimated: true,
+      adaptivePosition: true,
+      dateInputFormat: 'DD/MM/YYYY hh:mm a',
+      containerClass: 'theme-default',
+      showWeekNumbers: false
+    };
+  }
 
+  constructor(private formBuilder: FormBuilder,
+              private localeService: BsLocaleService,
+              private router: ActivatedRoute,
+              private eventoService: EventoService,
+              private toastr: ToastrService,
+              private spinner: NgxSpinnerService) {
+    this.localeService.use('pt-br');
   }
 
   ngOnInit(): void {
     this.validation();
+    this.carregarEvento();
   }
 
   public validation(): void {
@@ -38,6 +64,26 @@ export class EventoDetalheComponent implements OnInit {
   }
 
   public resetForm(): void {
-    this.form.reset()
+    this.form.reset();
+  }
+
+  public carregarEvento(): void {
+    const eventoIdParam = this.router.snapshot.paramMap.get('id');
+
+    if (eventoIdParam != null) {
+      this.spinner.show();
+      this.eventoService.getEventoById(+eventoIdParam).subscribe({
+        next: (evento: Evento) => {
+          this.evento = { ...evento };
+          this.form.patchValue(this.evento);
+        },
+        error: (erro: any) => {
+          this.spinner.hide();
+          console.error('Erro ao tentar carregar evento:', erro); // Adicione um log para depuração
+          this.toastr.error('Erro ao tentar carregar evento.', 'Erro!');
+        },
+        complete: () => this.spinner.hide()
+      });
+    }
   }
 }

@@ -20,7 +20,6 @@ export class NavComponent implements OnInit {
   }
 
   showMenu(): boolean {
-    console.log('Current URL:', this.router.url);
     return this.router.url !== '/user/login';
   }
 }
