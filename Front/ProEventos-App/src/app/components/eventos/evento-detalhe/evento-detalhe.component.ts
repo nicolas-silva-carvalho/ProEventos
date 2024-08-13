@@ -1,6 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { BsDatepickerModule, BsLocaleService } from 'ngx-bootstrap/datepicker';
 import { defineLocale } from 'ngx-bootstrap/chronos';
 import { ptBrLocale } from 'ngx-bootstrap/locale';
@@ -14,14 +19,20 @@ defineLocale('pt-br', ptBrLocale);
 @Component({
   selector: 'app-evento-detalhe',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, BsDatepickerModule, ToastrModule, NgxSpinnerModule,],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    BsDatepickerModule,
+    ToastrModule,
+    NgxSpinnerModule,
+  ],
   templateUrl: './evento-detalhe.component.html',
-  styleUrls: ['./evento-detalhe.component.css'] // Corrigido de styleUrl para styleUrls
+  styleUrls: ['./evento-detalhe.component.css'], // Corrigido de styleUrl para styleUrls
 })
 export class EventoDetalheComponent implements OnInit {
-
   evento!: Evento;
   form!: FormGroup;
+  estadoSalvar = 'post';
 
   get f(): any {
     return this.form.controls;
@@ -33,16 +44,18 @@ export class EventoDetalheComponent implements OnInit {
       adaptivePosition: true,
       dateInputFormat: 'DD/MM/YYYY hh:mm a',
       containerClass: 'theme-default',
-      showWeekNumbers: false
+      showWeekNumbers: false,
     };
   }
 
-  constructor(private formBuilder: FormBuilder,
-              private localeService: BsLocaleService,
-              private router: ActivatedRoute,
-              private eventoService: EventoService,
-              private toastr: ToastrService,
-              private spinner: NgxSpinnerService) {
+  constructor(
+    private formBuilder: FormBuilder,
+    private localeService: BsLocaleService,
+    private router: ActivatedRoute,
+    private eventoService: EventoService,
+    private toastr: ToastrService,
+    private spinner: NgxSpinnerService
+  ) {
     this.localeService.use('pt-br');
   }
 
@@ -53,8 +66,22 @@ export class EventoDetalheComponent implements OnInit {
 
   public validation(): void {
     this.form = this.formBuilder.group({
-      tema: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(50)]],
-      local: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(50)]],
+      tema: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(4),
+          Validators.maxLength(50),
+        ],
+      ],
+      local: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(4),
+          Validators.maxLength(50),
+        ],
+      ],
       dataEvento: ['', [Validators.required]],
       qtdPessoas: ['', [Validators.required, Validators.max(120000)]],
       telefone: ['', Validators.required],
@@ -72,6 +99,7 @@ export class EventoDetalheComponent implements OnInit {
 
     if (eventoIdParam != null) {
       this.spinner.show();
+      this.estadoSalvar = 'put';
       this.eventoService.getEventoById(+eventoIdParam).subscribe({
         next: (evento: Evento) => {
           this.evento = { ...evento };
@@ -79,11 +107,42 @@ export class EventoDetalheComponent implements OnInit {
         },
         error: (erro: any) => {
           this.spinner.hide();
-          console.error('Erro ao tentar carregar evento:', erro); // Adicione um log para depuração
+          console.error('Erro ao tentar carregar evento:', erro);
           this.toastr.error('Erro ao tentar carregar evento.', 'Erro!');
         },
-        complete: () => this.spinner.hide()
+        complete: () => this.spinner.hide(),
       });
+    }
+  }
+
+  public salvarAlteracao(): void {
+    this.spinner.show();
+    if (this.form.valid) {
+      if (this.estadoSalvar === 'post') {
+        this.evento = { ...this.form.value };
+        this.eventoService['post'](this.evento).subscribe({
+          next: () => {
+            this.toastr.success('Evento salvo com sucesso!', 'Sucesso!');
+          },
+          error: (erro: any) => {
+            this.spinner.hide();
+            this.toastr.error('Erro ao salvar evento.', 'Erro!');
+          },
+          complete: () => this.spinner.hide(),
+        });
+      } else {
+        this.evento = {id: this.evento.id, ...this.form.value };
+        this.eventoService['put'](this.evento).subscribe({
+          next: () => {
+            this.toastr.success('Evento salvo com sucesso!', 'Sucesso!');
+          },
+          error: (erro: any) => {
+            this.spinner.hide();
+            this.toastr.error('Erro ao salvar evento.', 'Erro!');
+          },
+          complete: () => this.spinner.hide(),
+        });
+      }
     }
   }
 }

@@ -18,14 +18,26 @@ import { Router, RouterLink } from '@angular/router';
 @Component({
   selector: 'app-evento-lista',
   standalone: true,
-  imports: [CommonModule, FormsModule, DateTimeFormatPipe, CollapseModule, ModalModule, TooltipModule, ToastrModule, NgxSpinnerModule, TituloComponent, RouterLink],
+  imports: [
+    CommonModule,
+    FormsModule,
+    DateTimeFormatPipe,
+    CollapseModule,
+    ModalModule,
+    TooltipModule,
+    ToastrModule,
+    NgxSpinnerModule,
+    TituloComponent,
+    RouterLink,
+  ],
   templateUrl: './evento-lista.component.html',
   styleUrl: './evento-lista.component.css',
-  providers: [BsModalService]
+  providers: [BsModalService],
 })
 export class EventoListaComponent {
   public eventos: Evento[] = [];
   public eventosFiltrados: Evento[] = [];
+  public eventoId!: number;
 
   public mostrarImagem: boolean = true;
   private _filtroLista: string = '';
@@ -49,7 +61,7 @@ export class EventoListaComponent {
     private toastr: ToastrService,
     private spinner: NgxSpinnerService,
     private router: Router
-  ) { }
+  ) {}
 
   public ngOnInit(): void {
     this.getEventos();
@@ -68,9 +80,9 @@ export class EventoListaComponent {
       },
       error: (erro: any) => {
         this.spinner.hide();
-        this.toastr.error('Erro ao carregar os eventos.', 'Error!')
+        this.toastr.error('Erro ao carregar os eventos.', 'Error!');
       },
-      complete: () => this.spinner.hide()
+      complete: () => this.spinner.hide(),
     });
   }
 
@@ -87,13 +99,37 @@ export class EventoListaComponent {
     );
   }
 
-  public openModal(template: TemplateRef<void>): void {
+  public openModal(
+    event: any,
+    template: TemplateRef<void>,
+    eventoId: number
+  ): void {
+    event.stopPropagation();
+    this.eventoId = eventoId;
     this.modalRef = this.modalService.show(template, { class: 'modal-sm' });
   }
 
   public confirm(): void {
     this.modalRef?.hide();
-    this.toastr.success('O Evento foi deletado com sucesso.', 'Deletado!');
+    this.spinner.show();
+
+    this.eventoService.deleteEvento(this.eventoId).subscribe({
+      next: (result: string) => {
+        this.toastr.success('O Evento foi deletado com sucesso.', 'Deletado!');
+        this.spinner.hide();
+        this.getEventos();
+      },
+      error: (error: any) => {
+        this.toastr.error(
+          `Erro ao tentar deletar o evento ${this.eventoId}.`,
+          'Erro'
+        );
+        this.spinner.hide();
+      },
+      complete: () => {
+        this.spinner.hide();
+      },
+    }).add(() => this.spinner.hide());
   }
 
   public decline(): void {
@@ -101,7 +137,6 @@ export class EventoListaComponent {
   }
 
   public detalheEvento(eventoId: number): void {
-    this.router.navigate([`eventos/detalhe/${eventoId}`])
+    this.router.navigate([`eventos/detalhe/${eventoId}`]);
   }
-
 }
