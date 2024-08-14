@@ -25,6 +25,7 @@ defineLocale('pt-br', ptBrLocale);
     BsDatepickerModule,
     ToastrModule,
     NgxSpinnerModule,
+    BsDatepickerModule
   ],
   templateUrl: './evento-detalhe.component.html',
   styleUrls: ['./evento-detalhe.component.css'], // Corrigido de styleUrl para styleUrls

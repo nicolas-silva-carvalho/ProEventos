@@ -15,8 +15,12 @@ builder.Services.AddControllers().AddNewtonsoftJson(x => x.SerializerSettings.Re
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddScoped<IEventoService, EventoService>();
+builder.Services.AddScoped<ILoteService, LoteService>();
+
 builder.Services.AddScoped<IGeralPersistence, GeralPersistence>();
 builder.Services.AddScoped<IEventoPersistence, EventoPersistence>();
+builder.Services.AddScoped<ILotePersistence, LotePersistence>();
+
 builder.Services.AddCors();
 
 var app = builder.Build();
